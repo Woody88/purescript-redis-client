@@ -22,8 +22,8 @@ module Database.Redis
   , flushdb
   , hget
   , hgetall
-  , hset
   , hscanStream
+  , hset
   , get
   , incr
   , keys
@@ -63,7 +63,7 @@ import Data.Maybe (Maybe(..))
 import Data.NonEmpty (NonEmpty)
 import Data.Nullable (Nullable, toMaybe, toNullable)
 import Data.Tuple (Tuple(..))
-import Prim.Row (class Union)
+import Prim.Row (class Union) as Row 
 import Node.Stream 
 import Unsafe.Coerce (unsafeCoerce)
 
@@ -582,14 +582,14 @@ foreign import zscanStreamImpl :: forall opts.
   -> EffectFnAff (Tuple (Array {member :: String, score :: Int}) (Readable ())) 
 
 scanStream :: forall options t. 
-  Union options t ScanStreamOptions 
+  Row.Union options t ScanStreamOptions 
   => Connection 
   -> Record options 
   -> Aff (Tuple (Array String) (Readable ()))
 scanStream redis options = fromEffectFnAff $ scanStreamImpl redis options Tuple
 
 hscanStream :: forall options t. 
-  Union options t ScanStreamOptions 
+  Row.Union options t ScanStreamOptions 
   => Connection 
   -> Record options 
   -> String
@@ -597,7 +597,7 @@ hscanStream :: forall options t.
 hscanStream redis options hash = fromEffectFnAff $ hscanStreamImpl redis options hash Tuple
 
 zscanStream :: forall options t. 
-  Union options t ScanStreamOptions 
+  Row.Union options t ScanStreamOptions 
   => Connection 
   -> Record options 
   -> String
